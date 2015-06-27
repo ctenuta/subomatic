@@ -10,6 +10,8 @@
 	<string></string>
 	<key>CFBundleIdentifier</key>
 	<string>br.com.cubique.$(PRODUCT_NAME:rfc1034identifier)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Sub-O-Matic</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
