@@ -16,15 +16,10 @@ OROpenSubtitleDownloader *downloader;
 
 @synthesize hash;
 
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-  
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-  //  downloader = [[OROpenSubtitleDownloader alloc] initWithUserAgent:@"OSTestUserAgent"];
   
     downloader = [[OROpenSubtitleDownloader alloc] initWithUserAgent:@"Sub-O-Matic"];
     downloader.languageString = [defaults stringForKey:@"SelectedLanguage"];
@@ -36,7 +31,7 @@ OROpenSubtitleDownloader *downloader;
     [self.tableView setDoubleAction:@selector(doubleClick:)];
     
 
-[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:self.view.window];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:self.view.window];
     
     
     _checkStatusTimer =  [NSTimer scheduledTimerWithTimeInterval:.5
@@ -50,7 +45,6 @@ OROpenSubtitleDownloader *downloader;
 - (IBAction)doubleClick:(id)sender {
 
     NSInteger rowNumber = [self.tableView clickedRow];
-    
     OpenSubtitleSearchResult *downloadSubtitle = [_sortedSubtitles objectAtIndex:rowNumber];
     
     [self downloadSubtitleWithSubtitleId:downloadSubtitle.subtitleID];
@@ -59,19 +53,13 @@ OROpenSubtitleDownloader *downloader;
 }
 
 
-
-
--(IBAction)donate:(id)sender
-{
+-(IBAction)donate:(id)sender {
     [[NSWorkspace sharedWorkspace] openURL:
     [NSURL URLWithString:@"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cristiano%40tenuta%2ecom%2ebr&lc=BR&item_name=Cristiano%20Tenuta&item_number=Sub%2dO%2dMatic&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted"]];   
 }
 
 
-
-- (IBAction)openMovieDialog:(id)sender
-{
-    
+- (IBAction)openMovieDialog:(id)sender {
     
     // Create a File Open Dialog class.
     NSOpenPanel* openDlg = [NSOpenPanel openPanel];
@@ -85,23 +73,18 @@ OROpenSubtitleDownloader *downloader;
     [openDlg setAllowedFileTypes:fileTypesArray];
     [openDlg setAllowsMultipleSelection:FALSE];
     
-   
     
     // Display the dialog box.  If the OK pressed,
     // process the files.
     if ( [openDlg runModal] == NSOKButton ) {
         
-        
         // Gets list of all files selected
-        
         NSArray *files = [openDlg URLs];
         
         if ([files count] > 0)
         {
             NSURL *fileURL = [files objectAtIndex:0];
-            
-            
-            
+                        
             _moviePath = [[fileURL path] stringByDeletingLastPathComponent];
             _movieFileName = [[[fileURL path] lastPathComponent] stringByDeletingPathExtension];
             _movieFilePath.stringValue = [fileURL path];
@@ -126,20 +109,14 @@ OROpenSubtitleDownloader *downloader;
                 NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"subDownloadsCnt" ascending:FALSE];
                 [_sortedSubtitles sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
           
-    
                 [[self tableView] performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
                 
             }];
-
-        }
-        
+        }   
     }
-
-    
 }
 
-- (NSURL*)applicationDirectory
-{
+- (NSURL*)applicationDirectory {
     NSString* bundleID = [[NSBundle mainBundle] bundleIdentifier];
     NSFileManager*fm = [NSFileManager defaultManager];
     NSURL*    dirPath = nil;
@@ -167,26 +144,12 @@ OROpenSubtitleDownloader *downloader;
     return dirPath;
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
-{
-
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     return [_sortedSubtitles count];
-    
-
 }
 
-//-(id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
-//{
-//    OpenSubtitleSearchResult *subtitle =  [_subtitles objectAtIndex:row];
-//   
-//    NSString *columnId =[tableColumn identifier];
-//    NSString *value = [subtitle valueForKey: columnId];
-//    return value;
-//   }
 
-
--(NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
-{
+-(NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     OpenSubtitleSearchResult *subtitle =  [_sortedSubtitles objectAtIndex:row];
     
     NSString *columnId =[tableColumn identifier];
@@ -211,14 +174,12 @@ OROpenSubtitleDownloader *downloader;
 
 }
 
--(void)download:(NSButton *)sender
-{
+-(void)download:(NSButton *)sender {
     [self downloadSubtitleWithSubtitleId:sender.alternateTitle];
 }
 
 
--(void)downloadSubtitleWithSubtitleId:(NSString *)subtitleId
-{
+-(void)downloadSubtitleWithSubtitleId:(NSString *)subtitleId {
     NSString *fileName;
     NSError *err;
     NSURL *fileURL;
@@ -271,48 +232,37 @@ OROpenSubtitleDownloader *downloader;
                             fileExist = [fileURL checkResourceIsReachableAndReturnError:&err];
                         }
                         
-                        
-                        
                         [downloader downloadSubtitlesForResult:subtitle toPath:[NSString stringWithFormat:@"%@", fileName] :^{}];
                         
                     }
                     
                 }
                 
-                
             }
-            
             
         }
     }
 }
 
 
--(void)openSubtitlerDidLogIn:(OROpenSubtitleDownloader *)downloader
-{
-    
+-(void)openSubtitlerDidLogIn:(OROpenSubtitleDownloader *)downloader {
     _movieFilePath.enabled = YES;
-    _importMovie.enabled = YES;
-    
-  }
+    _importMovie.enabled = YES;    
+}
 
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];
-
-    // Update the view, if already loaded.
 }
 
 
-- (void)windowWillClose:(NSNotification *)notification
-{
+- (void)windowWillClose:(NSNotification *)notification {
     NSWindow *win = [notification object];
     
     if ([win.identifier isEqualToString:@"MainWindow"])
         [NSApp terminate:self];
 }
 
--(void)checkStatus
-{
+-(void)checkStatus {
     switch (downloader.state) {
         case OROpenSubtitleStateLoggingIn:
             [_status setStringValue:@"Status: Logging In..."];
@@ -337,8 +287,4 @@ OROpenSubtitleDownloader *downloader;
             break;
     }
 }
-
-
-
-
 @end
